@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amazon Shopping Cart</title>
+</head>
+<body>
+   
+
+  <script>
+const appDiv = document.createElement("div");
+appDiv.id = "app";
+
+const h1 = document.createElement("h1");
+h1.textContent = "Amazon Shopping Cart";
+
+const productListDiv = document.createElement("div");
+productListDiv.id = "product-list";
+
+const cartDiv = document.createElement("div");
+cartDiv.id = "cart";
+
+const h2 = document.createElement("h2");
+h2.textContent = "Shopping Cart";
+
+const ul = document.createElement("ul");
+ul.id = "cart-items";
+
+const p = document.createElement("p");
+p.textContent = "Total: $";
+const spanTotal = document.createElement("span");
+spanTotal.id = "total";
+spanTotal.textContent = "0.00";
+p.appendChild(spanTotal);
+
+const button = document.createElement("button");
+button.className = "checkout-btn";
+button.textContent = "Checkout";
+button.onclick = checkout;
+
+cartDiv.appendChild(h2);
+cartDiv.appendChild(ul);
+cartDiv.appendChild(p);
+cartDiv.appendChild(button);
+
+appDiv.appendChild(h1);
+appDiv.appendChild(productListDiv);
+appDiv.appendChild(cartDiv);
+
+document.body.appendChild(appDiv);
+
+const products = [
+  { id: 1, name: "Product 1", price: 10.99, image: "https://images.unsplash.com/photo-1588099768531-a72d4a198538?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",numb:0 },
+  { id: 2, name: "Product 2", price: 24.99, image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",numb:0 },
+  { id: 3, name: "Product 3", price: 14.49, image: "https://images.unsplash.com/photo-1499971442178-8c10fdf5f6ac?q=80&w=1891&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",numb:0 },
+];
+
+let cart = [];
+let total = 0;
+
+function renderProducts() {
+  const productList = document.getElementById("product-list");
+
+  products.forEach((product) => {
+    const productElement = document.createElement("div");
+    productElement.classList.add("product");
+
+    const productImage = document.createElement("img");
+    productImage.src = product.image;
+
+    const productName = document.createElement("h3");
+    productName.textContent = product.name;
+
+    const productPrice = document.createElement("p");
+    productPrice.textContent = `$${product.price.toFixed(2)}`;
+
+    
+    const dial = document.createElement("input");
+    dial.setAttribute("type", "number");
+    dial.style.width="50px";
+    dial.style.margin="0px 10px";
+    
+    const productQuant = document.createElement("h3");
+    productQuant.textContent = product.numb;
+
+    const addButton = document.createElement("button");
+    addButton.textContent = "Add to Cart";
+    addButton.addEventListener("click", function() {
+
+        let a=parseInt(dial.value);   
+        if(a>0){
+          product.numb=a;
+          productQuant.textContent=product.numb;
+          addToCart(product.id);
+        }
+      });  
+
+    productElement.appendChild(productImage);
+    productElement.appendChild(productName);
+    productElement.appendChild(productPrice);
+    productElement.appendChild(addButton);
+    productElement.appendChild(dial); 
+
+    productList.appendChild(productElement);
+  });
+}
+
+function renderCart() {
+  const cartItems = document.getElementById("cart-items");
+  const totalElement = document.getElementById("total");
+
+  cartItems.innerHTML = "";
+
+  cart.forEach((item) => {
+    const cartItem = document.createElement("li");
+    cartItem.classList.add("cart-item");
+
+    const itemImage = document.createElement("img");
+    itemImage.src = item.image;
+    itemImage.alt = item.name;
+    itemImage.style.width = "100%";
+    itemImage.style.height="400px";
+    itemImage.style.marginBottom = "10px"; 
+   
+    const itemName = document.createElement("div");
+    itemName.textContent = item.name;
+    cartItem.appendChild(itemName);
+    
+    let productQuant = document.createElement("div");
+    productQuant.textContent ="Quantity: "+item.numb;
+    cartItem.appendChild(productQuant);
+    // Product price
+    const itemPrice = document.createElement("span");
+    itemPrice.textContent = `$${item.price.toFixed(2)}`;
+    cartItem.appendChild(itemPrice);
+
+    cartItems.appendChild(cartItem);
+  });
+
+  totalElement.textContent = total.toFixed(2);
+}
+
+function addToCart(productId) {
+  const product = products.find((p) => p.id === productId);
+
+  if (product) {
+    let flag=0;
+    for(let i=0;i<cart.length;i++){
+      if(product.id==cart[i].id){
+        cart[i].numb=product.numb; 
+        flag=1; 
+      } 
+    }
+    if(flag==0){ 
+      cart.push({ id: product.id, name: product.name, price: product.price,numb: product.numb });
+    }
+    total=0;
+    for(let i=0;i<cart.length;i++){
+      
+      total += cart[i].price*cart[i].numb;
+    }
+    renderCart();
+  }
+}
+
+function checkout() {
+  alert("Checkout complete!");
+  cart = [];
+  total = 0;
+  renderCart();
+}
+
+function applyStyles() {
+
+  document.body.style.fontFamily = "'Amazon Ember', Arial, sans-serif";
+  document.body.style.margin = "0";
+  document.body.style.padding = "0";
+  document.body.style.backgroundColor = "#f3f3f3";
+
+  const app = document.getElementById("app");
+  app.style.maxWidth = "1400px";
+  app.style.margin = "0 auto";
+  app.style.padding = "20px";
+  app.style.backgroundColor = "#fff";
+
+  const headings = document.querySelectorAll("h1, h2");
+  headings.forEach(heading => {
+    heading.style.fontSize = "24px";
+    heading.style.color = "#333";
+    heading.style.marginBottom = "20px";
+  });
+
+  const productList = document.getElementById("product-list");
+  productList.style.display = "flex";
+  productList.style.flexWrap = "wrap";
+
+  const products = document.querySelectorAll(".product");
+  products.forEach(product => {
+    product.style.width = "calc(29% - 20px)"; 
+    product.style.margin = "10px";
+    product.style.padding = "15px";
+    product.style.backgroundColor = "#fff";
+    product.style.border = "1px solid #ddd";
+    product.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.1)";
+  });
+
+  const productImages = document.querySelectorAll(".product img");
+  productImages.forEach(image => {
+    image.style.width = "100%";
+    image.style.height = "400px";
+  });
+
+  const productText = document.querySelectorAll(".product h3, .product p");
+  productText.forEach(textElement => {
+    textElement.style.fontSize = "16px";
+    textElement.style.color = "#333";
+    textElement.style.marginBottom = "10px";
+  });
+
+  const buttons = document.querySelectorAll(".product button");
+  buttons.forEach(button => {
+    button.style.backgroundColor = "#ff9900";
+    button.style.color = "#fff";
+    button.style.padding = "10px 20px";
+    button.style.border = "none";
+    button.style.cursor = "pointer";
+    button.style.fontSize = "14px";
+    button.style.borderRadius = "4px";
+  });
+
+ 
+  const cart = document.getElementById("cart");
+  products.forEach(cart => {
+    cart.style.width = "calc(29% - 20px)"; 
+    cart.style.margin = "10px";
+    cart.style.padding = "15px";
+    cart.style.backgroundColor = "#fff";
+    cart.style.border = "1px solid #ddd";
+    cart.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.1)";
+  });  
+  
+   const cartItems = document.getElementById("cart-items"); 
+  cartItems.style.margin = "0"; 
+
+  const cartItem = document.querySelectorAll(".cart-item");
+  cartItem.forEach(item => {
+    item.style.width = "30%"; 
+    item.style.marginBottom = "20px"; 
+    item.style.padding = "15px";
+    item.style.backgroundColor = "#fff";
+    item.style.border = "1px solid #ddd";
+    item.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.1)";
+    item.style.boxSizing = "border-box"; 
+  });
+
+  const cartItemImages = document.querySelectorAll(".cart-item img");
+ 
+  const cartItemText = document.querySelectorAll(".cart-item span");
+  cartItemText.forEach(textElement => {
+    textElement.style.fontSize = "16px";
+    textElement.style.color = "#333";
+    textElement.style.marginBottom = "10px";
+  });
+
+  const totalElement = document.getElementById("total");
+  totalElement.style.fontSize = "18px";
+  totalElement.style.fontWeight = "bold";
+
+  const checkoutButton = document.querySelector(".checkout-btn");
+  checkoutButton.style.backgroundColor = "#ff9900";
+  checkoutButton.style.color = "#fff";
+  checkoutButton.style.padding = "15px 40px";
+  checkoutButton.style.border = "none";
+  checkoutButton.style.cursor = "pointer";
+  checkoutButton.style.fontSize = "18px";
+  checkoutButton.style.borderRadius = "4px";
+  checkoutButton.style.marginTop = "20px";
+  checkoutButton.style.float = "right";
+}
+
+renderProducts();
+
+applyStyles();
+  </script>
+</body>
+</html>
